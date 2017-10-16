@@ -31,3 +31,11 @@
 *.out
 *.app
 packages/
+.vs/
+Build/
+PrismaticCore/x64/
+PrismaticMath/x64/
+PrismaticUtil/x64/Debug/
+PrismaticCore.Test/x64/
+PrismaticRenderer/x64/Debug/
+PrismaticTest/x64/
