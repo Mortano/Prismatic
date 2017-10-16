@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien\Threading">
+      <UniqueIdentifier>{96f93ccb-fc5e-4983-83c6-4ec391e2b443}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Threading">
+      <UniqueIdentifier>{58b507fb-823c-4cd0-b275-5078be8522e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Syntax">
+      <UniqueIdentifier>{b1ad1814-fe23-4e5d-8e06-c123c2512f77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\DataStructures">
+      <UniqueIdentifier>{2d35da06-6f23-41af-9387-16461d836872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Reflection">
+      <UniqueIdentifier>{d4dd3347-2daa-499a-9ee3-ffedc163da2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Memory">
+      <UniqueIdentifier>{6bdd07c1-fd9c-4644-8d18-2bb4ad8ea056}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Memory">
+      <UniqueIdentifier>{7ba06896-71a0-402a-9ec1-05d0df8f1a26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Time">
+      <UniqueIdentifier>{357b414d-8624-4268-b82a-7326cfd81279}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Time">
+      <UniqueIdentifier>{7bd532d0-29dc-459e-b171-8642fa06e920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Exceptions">
+      <UniqueIdentifier>{a1e359fa-3e62-42eb-a0e5-16a1096e445c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Exceptions">
+      <UniqueIdentifier>{43b7c1a6-2809-4785-8876-9b1987772439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Events">
+      <UniqueIdentifier>{fc1622ea-2b00-4ca6-a9f3-0c26010bf07b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\FileSystem">
+      <UniqueIdentifier>{5ff49a77-c683-45f7-be1f-434eef7a87ec}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\peUtilDefs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Threading\peSemaphore.h">
+      <Filter>Headerdateien\Threading</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Memory\peAllocator.h">
+      <Filter>Headerdateien\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Memory\peAllocators.h">
+      <Filter>Headerdateien\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Memory\peLeakDetection.h">
+      <Filter>Headerdateien\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Memory\peMemoryUtil.h">
+      <Filter>Headerdateien\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Time\peTimer.h">
+      <Filter>Headerdateien\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Exceptions\peExceptions.h">
+      <Filter>Headerdateien\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Events\peDelegate.h">
+      <Filter>Headerdateien\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Exceptions\peLogging.h">
+      <Filter>Headerdateien\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Memory\peAllocatable.h">
+      <Filter>Headerdateien\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\FileSystem\peFileSystemUtil.h">
+      <Filter>Headerdateien\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Memory\peStlAllocatorWrapper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\DataStructures\peVector.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\DataStructures\peUnorderedMap.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Algorithms\peAlgorithms.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\DataStructures\pePool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Threading\peSemaphore.cpp">
+      <Filter>Quelldateien\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="PrismaticUtil.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Memory\peAllocator.cpp">
+      <Filter>Quelldateien\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Memory\peAllocators.cpp">
+      <Filter>Quelldateien\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Memory\peLeakDetection.cpp">
+      <Filter>Quelldateien\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Time\peTimer.cpp">
+      <Filter>Quelldateien\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Exceptions\peExceptions.cpp">
+      <Filter>Quelldateien\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Exceptions\peLogging.cpp">
+      <Filter>Quelldateien\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\FileSystem\peFileSystemUtil.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Memory\peAllocatable.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Headers\Memory\NewDelete.inl">
+      <Filter>Headerdateien\Memory</Filter>
+    </None>
+  </ItemGroup>
+</Project>

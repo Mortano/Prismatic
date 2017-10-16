@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien\OpenGL">
+      <UniqueIdentifier>{a0a02b99-f243-4c3d-95c5-d257a9524006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\OpenGL">
+      <UniqueIdentifier>{bcd2627f-604c-4761-bd86-2af3e9def994}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\peRendererDefs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\OpenGL\peGlRenderer.h">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\peCreateRenderer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\OpenGL\peGlWindow.h">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\OpenGL\peGlRendererBackend.h">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\OpenGL\peGlContext.h">
+      <Filter>Headerdateien\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\peVulkanRenderer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\peVulkanRendererBackend.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Abstraction\peVulkanInstance.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Util\peCreateInfoHelper.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Util\peVulkanObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Util\peVulkanVerify.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Abstraction\pePhysicalDevice.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Abstraction\peLogicalDevice.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Abstraction\peCommandBuffer.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Abstraction\peCommandPool.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Vulkan\Util\peDeviceBoundVulkanObject.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PrismaticRenderer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\peGlRenderer.cpp">
+      <Filter>Quelldateien\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\peGlWindow.cpp">
+      <Filter>Quelldateien\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\peGlRendererBackend.cpp">
+      <Filter>Quelldateien\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\OpenGL\peGlContext.cpp">
+      <Filter>Quelldateien\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\peVulkanRenderer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\Abstraction\peVulkanInstance.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\Util\peCreateInfoHelper.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\Abstraction\pePhysicalDevice.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\Abstraction\peLogicalDevice.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\Abstraction\peCommandBuffer.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Vulkan\Abstraction\peCommandPool.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

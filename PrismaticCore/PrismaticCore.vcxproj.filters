@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien\Subsystems">
+      <UniqueIdentifier>{45866789-faef-4f25-97a6-71055e5f4856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Subsystems">
+      <UniqueIdentifier>{5b9ca41a-79c5-43e3-88b8-a494916dc532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\SubsystemImpl">
+      <UniqueIdentifier>{dac26fb7-0fb2-4a9a-8fba-cea6d3abf1ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\SubsystemImpl">
+      <UniqueIdentifier>{a642acc5-0fe6-42a7-abd7-f31fff850ec9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\peCoreDefs.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\peEngine.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Subsystems\IRenderer.h">
+      <Filter>Headerdateien\Subsystems</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\peDllLoader.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Subsystems\IUpdateSystem.h">
+      <Filter>Headerdateien\Subsystems</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SubsystemImpl\peUpdateSystem.h">
+      <Filter>Headerdateien\SubsystemImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Subsystems\IInputSystem.h">
+      <Filter>Headerdateien\Subsystems</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Subsystems\ISubsystem.h">
+      <Filter>Headerdateien\Subsystems</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\SubsystemImpl\peInputSystem.h">
+      <Filter>Headerdateien\SubsystemImpl</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Entities\Entity.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="PrismaticCore.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\peEngine.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\peDllLoader.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SubsystemImpl\peUpdateSystem.cpp">
+      <Filter>Quelldateien\SubsystemImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SubsystemImpl\peInputSystem.cpp">
+      <Filter>Quelldateien\SubsystemImpl</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Entities\Entity.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>
