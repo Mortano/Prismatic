@@ -14,6 +14,11 @@ public:
       throw std::runtime_error{"Element size must not exceed chunk size!"};
   }
 
+  ~peBasePool() {
+    for (auto chunk : _chunks)
+      _allocator->Free(chunk);
+  }
+
   //! \brief Reserve at least 'count' elements
   //! \param count Number of elements to reserve
   void Reserve(size_t count) {
@@ -21,7 +26,7 @@ public:
     if (diff <= 0)
       return;
     const auto elementsPerChunk = _chunkSize / ElementSize();
-    auto chunksToAdd = static_cast<size_t>(diff) / elementsPerChunk;
+    auto chunksToAdd = static_cast<size_t>(diff) / elementsPerChunk + 1;
     AddChunks(chunksToAdd);
   }
 

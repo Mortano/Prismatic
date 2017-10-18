@@ -5,6 +5,7 @@
 #include <map>
 
 #include <Windows.h>
+#include <functional>
 
 namespace pe {
 
@@ -64,7 +65,7 @@ public:
   virtual void *Allocate(size_t size) override;
   virtual void Free(void *mem) override;
 
-  static IAllocatorStatistics *GetInstance();
+  static peLeakDetectionAllocator *GetInstance();
 
   // Getters
   virtual size_t GetFreeMemory() const override {
@@ -81,7 +82,7 @@ public:
     return GetFreeMemory() + GetReservedMemory();
   }
 
-  void LogLeaks();
+  void LogLeaks(std::function<void(const char *)> printer);
 
 private:
 #define MAX_ALLOCATIONS 10000
@@ -171,8 +172,8 @@ template <typename T> void DeleteAndNull(T *&obj, IAllocator *allocator) {
 #ifdef TRACK_LEAKS
 #define GlobalAllocator pe::peLeakDetectionAllocator::GetInstance()
 #define PrintLeaks                                                             \
-  static_cast<rtr::LeakDetectionAllocator &>(                                  \
-      rtr::LeakDetectionAllocator::GetInstance())                              \
+  static_cast<pe::LeakDetectionAllocator &>(                                   \
+      pe::LeakDetectionAllocator::GetInstance())                               \
       .LogLeaks();
 #else
 #define GlobalAllocator pe::peStdAllocator::GetInstance()

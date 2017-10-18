@@ -25,6 +25,9 @@ public:
   struct PE_CORE_API Handle {
     constexpr Handle(uint32_t index, uint32_t version);
 
+    bool operator==(const Handle &other) const;
+    bool operator!=(const Handle &other) const;
+
     //! \brief Invalid handle for entities
     static Handle Invalid();
     //! \brief Returns true if the given handle is invalid
@@ -39,6 +42,9 @@ public:
   peEntity();
   peEntity(Handle handle, peEntityManager &entityManager);
 
+  bool operator==(const peEntity &other) const;
+  bool operator!=(const peEntity &other) const;
+
   //! \brief Destroys this entity
   void Destroy() const;
 
@@ -47,7 +53,7 @@ public:
 
   //! \brief Returns a handle for this entity
   //! \returns Handle for this entity
-  Handle GetHandle() const;
+  auto GetHandle() const { return _handle; }
 
   //! \brief Adds a component of the given type to this entity. Will throw if
   //! this entity already has a component of type <paramref name="Component"/>
@@ -86,7 +92,7 @@ static_assert(sizeof(peEntity) == 16, "Entity should be 16 bytes wide!");
 template <typename Component> class peComponentHandle {
 public:
   peComponentHandle(peEntity::Handle entityHandle,
-                    const peEntityManager *entityManager)
+                    peEntityManager *entityManager)
       : _entityHandle(entityHandle), _entityManager(entityManager) {}
 
   Component *operator->() { return Dereference(); }
@@ -127,7 +133,7 @@ private:
   Component *Dereference() const;
 
   const peEntity::Handle _entityHandle;
-  const peEntityManager *_entityManager;
+  peEntityManager *const _entityManager;
 };
 
 #pragma endregion
@@ -211,13 +217,21 @@ template <typename... Components> struct AllOfPredicate {
 
 #pragma region peEntityManager
 
+namespace detail {
+struct AlwaysTrue {
+  template <typename... Args> constexpr bool operator()(Args &&...) const {
+    return true;
+  }
+};
+} // namespace detail
+
 //! \brief Manages lifecycle of entities and their components. Stores all
 //! component references in containers, one for each type of component. Stores a
 //! bitmask which indicates which entity has which components assigned.
 class PE_CORE_API peEntityManager {
 public:
   //! \brief Basic iterator
-  template <typename Predicate = std::nullopt_t> class BaseIterator {
+  template <typename Predicate = detail::AlwaysTrue> class BaseIterator {
   public:
     BaseIterator(uint32_t startIndex, peEntityManager &entityManager)
         : _entityManager(entityManager), _index(startIndex) {}
@@ -233,6 +247,10 @@ public:
              other._index == _index;
     }
 
+    bool operator!=(const BaseIterator &other) const {
+      return !operator==(other);
+    }
+
     bool IsAtEnd() const { return _index == _entityManager.Capacity(); }
 
   protected:
@@ -244,13 +262,13 @@ public:
       // Skip all dead entities and all entities that don't match the predicate
       do {
         ++_index;
-      } while (!_entityManager.IsAlive(_index) ||
-               !Predicate{}(_index, _entityManager));
+      } while (!IsAtEnd() && (!_entityManager.IsAlive(_index) ||
+                              !Predicate{}(_index, _entityManager)));
     }
   };
 
   //! \brief Iterator for entites
-  template <typename Predicate = std::nullopt_t>
+  template <typename Predicate = detail::AlwaysTrue>
   class EntityIterator : public BaseIterator<Predicate> {
   public:
     EntityIterator(uint32_t startIndex, peEntityManager &entityManager)
@@ -263,14 +281,14 @@ public:
 
     auto begin() const { return *this; }
     auto end() const {
-      return EntityIterator<Predicate>{_entityManager.Capacity(),
-                                       _entityManager};
+      return EntityIterator<Predicate>{
+          static_cast<uint32_t>(_entityManager.Capacity()), _entityManager};
     }
   };
 
   //! \brief Iterator for components of a given type
   //! \tparam Component Component type
-  template <typename Component, typename Predicate = std::nullopt_t>
+  template <typename Component, typename Predicate = detail::AlwaysTrue>
   class ComponentIterator : public BaseIterator<Predicate> {
   public:
     ComponentIterator(uint32_t startIndex, peEntityManager &entityManager)
@@ -365,7 +383,7 @@ public:
   //! entity \returns Handle to the component for the entity
   template <typename Component>
   peComponentHandle<Component>
-  GetComponentForEntity(peEntity::Handle entityHandle) const {
+  GetComponentForEntity(peEntity::Handle entityHandle) {
     if (!IsAlive(entityHandle))
       return peComponentHandle<Component>::Invalid();
     auto &componentsMask = _entityComponentMasks[entityHandle.index];
@@ -464,12 +482,13 @@ private:
   //! look it up again
   template <typename Component>
   void EnsureComponentPoolExists(peBaseComponent::Family_t family) {
-    if (_componentPools.size() < family)
-      _componentPools.resize(family);
+    if (_componentPools.size() <= family)
+      _componentPools.resize(family + 1);
     auto &pool = _componentPools[family];
     if (!pool) {
       pool = std::make_unique<pePool<Component>>();
     }
+    pool->Reserve(_entityVersions.size());
   }
 
   // One object pool for each type of components

@@ -9,6 +9,14 @@ peBaseComponent::Family_t peBaseComponent::s_familyCounter = 0;
 constexpr peEntity::Handle::Handle(uint32_t index, uint32_t version)
     : index(index), version(version) {}
 
+bool peEntity::Handle::operator==(const Handle &other) const {
+  return index == other.index && version == other.version;
+}
+
+bool peEntity::Handle::operator!=(const Handle &other) const {
+  return !operator==(other);
+}
+
 peEntity::Handle peEntity::Handle::Invalid() {
   return {(std::numeric_limits<uint32_t>::max)(),
           (std::numeric_limits<uint32_t>::max)()};
@@ -22,6 +30,14 @@ peEntity::peEntity() : _handle(Handle::Invalid()), _entityManager(nullptr) {}
 
 peEntity::peEntity(Handle handle, peEntityManager &entityManager)
     : _handle(handle), _entityManager(&entityManager) {}
+
+bool peEntity::operator==(const peEntity &other) const {
+  return _entityManager == other._entityManager && (_handle == other._handle);
+}
+
+bool peEntity::operator!=(const peEntity &other) const {
+  return !operator==(other);
+}
 
 void peEntity::Destroy() const { _entityManager->DestroyEntity(_handle); }
 
@@ -69,6 +85,7 @@ void peEntityManager::DestroyEntity(peEntity::Handle entityHandle) {
   }
 
   mask.reset();
+  _freeSlots.push_back(entityHandle.index);
 }
 
 bool peEntityManager::IsAlive(uint32_t index) const {
