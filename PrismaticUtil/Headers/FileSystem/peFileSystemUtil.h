@@ -1,4 +1,6 @@
 #pragma once
+#include "DataStructures/peVector.h"
+#include "Type\peColor.h"
 #include "peUtilDefs.h"
 #include <string>
 
@@ -15,4 +17,9 @@ PE_UTIL_API std::string GetModulePath();
 PE_UTIL_API std::string GetFolderFromFile(const std::string &filepath);
 
 } // namespace file
+
+void PE_UTIL_API DumpPNG(const peVector<RGBA_8Bit> &pixels,
+                         const uint32_t width, const uint32_t height,
+                         const std::string &path);
+
 } // namespace pe

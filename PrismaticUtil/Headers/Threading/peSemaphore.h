@@ -14,6 +14,10 @@ public:
   //! Try to decrement the semaphore count. This waits if the current
   //! count is zero,
   void WaitAndDecrement() const;
+  //! \brief Tries to decrement the count by one. Immediately returns false if
+  //! it can't be decremented
+  //! \returns True if decrement was succesfull
+  bool TryDecrement() const;
   //! Increments the semaphore count by one
   void Increment() const;
   //! Increments the semaphore count to the given value

@@ -147,7 +147,7 @@ void pePoolAllocator::AllocateNewChunk() {
   auto chunkIdx = static_cast<uint32_t>(_chunks.size()) - 1;
   for (auto curElement = chunk;
        curElement < chunk + (_chunkSize - _elementSize);
-       chunk += _elementSize) {
+       curElement += _elementSize) {
     auto offset = static_cast<uint32_t>(std::distance(chunk, curElement));
     _freeList.emplace_back(chunkIdx, offset);
   }

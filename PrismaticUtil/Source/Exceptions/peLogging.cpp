@@ -1,6 +1,5 @@
 #include "Exceptions\peLogging.h"
 
-
 #include "Algorithms/peAlgorithms.h"
 #include <stdio.h>
 
@@ -17,7 +16,7 @@ peLogging::~peLogging() {
 }
 
 void peLogging::DeregisterLogChannel(ILogChannel *channel) {
-   std::lock_guard<std::mutex> lock{ _channelsLock };
+  std::lock_guard<std::mutex> lock{_channelsLock};
   auto find = std::find(_logChannels.begin(), _logChannels.end(), channel);
   if (find == _logChannels.end())
     return;
@@ -123,5 +122,10 @@ void peConsoleLogChannel::Log(LogLevel level, const char *msg) {
   if (color != 0x07)
     SetConsoleTextAttribute(stdOutHandle, 0x07);
 }
+
+peFileLogChannel::peFileLogChannel(const std::string &filePath)
+    : _fstream(filePath.c_str()) {}
+
+void peFileLogChannel::Log(LogLevel level, const char *msg) { _fstream << msg; }
 
 } // namespace pe

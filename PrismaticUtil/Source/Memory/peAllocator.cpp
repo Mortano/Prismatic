@@ -84,9 +84,9 @@ void peLeakDetectionAllocator::TrackAllocation(size_t size, void *mem) {
   for (size_t i = hash; i < MAX_ALLOCATIONS; i++) {
     if (m_allocations[i].mem == nullptr)
       break;
-    if (m_allocations[i].mem == mem) {
-      PE_FAIL("Allocating memory that was already allocated!");
-    }
+    // if (m_allocations[i].mem == mem) {
+    //  PE_FAIL("Allocating memory that was already allocated!");
+    //}
   }
   constexpr uint32_t NumCallstackFrames = 16;
   AllocationInfo info;

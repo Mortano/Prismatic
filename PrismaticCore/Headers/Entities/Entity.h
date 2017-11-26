@@ -1,5 +1,6 @@
 #pragma once
 #include "DataStructures/pePool.h"
+#include "DataStructures/peUniquePtr.h"
 #include "peCoreDefs.h"
 #include <bitset>
 #include <cstdint>
@@ -35,8 +36,8 @@ public:
     //! \returns True if the handle is invalid
     static bool IsInvalid(const Handle &handle);
 
-    const uint32_t index;
-    const uint32_t version;
+    uint32_t index;
+    uint32_t version;
   };
 
   peEntity();
@@ -91,9 +92,15 @@ static_assert(sizeof(peEntity) == 16, "Entity should be 16 bytes wide!");
 //! \tparam Component Component type
 template <typename Component> class peComponentHandle {
 public:
+  peComponentHandle()
+      : _entityHandle(peEntity::Handle::Invalid()), _entityManager(nullptr) {}
+
   peComponentHandle(peEntity::Handle entityHandle,
                     peEntityManager *entityManager)
       : _entityHandle(entityHandle), _entityManager(entityManager) {}
+
+  peComponentHandle(const peComponentHandle &) = default;
+  peComponentHandle &operator=(const peComponentHandle &) = default;
 
   Component *operator->() { return Dereference(); }
   const Component *operator->() const { return Dereference(); }
@@ -118,9 +125,17 @@ public:
   //! \throws runtime_error if handle is invalid
   const Component &GetComponent() const { return *this; }
 
+  //! \brief Returns the entity that this component is associated with
+  //! \returns Entity for this component
+  peEntity GetEntity() const;
+
   //! \brief Returns true if this handle points to a valid component
   //! \returns True if this handle points to a valid component
   bool IsValid() const;
+
+  //! \brief Returns true if this handle points to a valid component
+  //! \returns True if this handle points to a valid component
+  operator bool() const;
 
   //! \brief Invalid handle
   //! \returns Invalid handle
@@ -132,8 +147,8 @@ private:
   friend class peEntityManager;
   Component *Dereference() const;
 
-  const peEntity::Handle _entityHandle;
-  peEntityManager *const _entityManager;
+  peEntity::Handle _entityHandle;
+  peEntityManager *_entityManager;
 };
 
 #pragma endregion
@@ -157,6 +172,7 @@ protected:
 //! inherit
 template <typename T> class peComponent : public peBaseComponent {
 public:
+  using Handle_t = peComponentHandle<T>;
   //! \brief Returns the component family of this component
   static Family_t Family();
 };
@@ -185,13 +201,14 @@ template <typename... Components> struct MakeBitmask_Helper;
 
 template <typename First, typename... Rest>
 struct MakeBitmask_Helper<First, Rest...> {
-  constexpr static peBaseComponent::Family_t value =
-      (peBaseComponent::Family_t{1} << GetFamilyOf<First>()) |
-      MakeBitmask_Helper<Rest...>::value;
+  constexpr static peBaseComponent::Family_t MakeBitmask() {
+    return (peBaseComponent::Family_t{1} << GetFamilyOf<First>()) |
+           MakeBitmask_Helper<Rest...>::MakeBitmask();
+  }
 };
 
 template <> struct MakeBitmask_Helper<> {
-  constexpr static peBaseComponent::Family_t value = 0;
+  constexpr static peBaseComponent::Family_t MakeBitmask() { return 0; }
 };
 } // namespace
 
@@ -202,16 +219,106 @@ template <> struct MakeBitmask_Helper<> {
 template <typename... Components>
 constexpr peComponentBitmask MakeBitmaskForComponents() {
   // TODO Easier with if constexpr or C++17 fold expressions...
-  return {MakeBitmask_Helper<Components...>::value};
+  return {MakeBitmask_Helper<Components...>::MakeBitmask()};
 }
 
+#pragma endregion
+
+#pragma region Systems
+
+namespace {
+//! \brief Checks that Component::System_t is a valid type alias
+template <typename Component, typename = std::void_t<>>
+struct HasSystemTypeAlias : std::false_type {};
+
+template <typename Component>
+struct HasSystemTypeAlias<Component, std::void_t<typename Component::System_t>>
+    : std::true_type {};
+
+//! \brief Variable template that indicates whether the given Component type has
+//! an associated component system or not
+template <typename Component>
+constexpr bool HasAssociatedSystem_v = HasSystemTypeAlias<Component>::value;
+
+} // namespace
+
+//! \brief Internal base class for all systems that interact with components
+struct PE_CORE_API peBaseComponentSystem {
+  virtual ~peBaseComponentSystem() {}
+
+  virtual void OnUpdateAll() = 0;
+};
+
+//! \brief Base class for all systems that interact with components. All systems
+//! shall inherit from this class. \n
+//! The subsystems are responsible for performing all operations relevant to one
+//! specific type of component. Subclasses can define a range of methods to
+//! 'hook' into the lifecycle of components: \n
+//!   OnCreate(Component&, const peEntity&) : Gets called when a component is
+//!   created \n OnDestroy(Component&, const peEntity&) : Gets called right
+//!   before a component is destroyed \n OnUpdate(Component&, const peEntity&) :
+//!   Gets called once per frame during the engine update phase
+//! \tparam System The subclass that is inheriting from this class (as per CRTP)
+template <typename System>
+class peComponentSystem : public peBaseComponentSystem {
+public:
+  //! \brief Gets called once per frame to call an update method on all
+  //! components of type <paramref name="Component">
+  void OnUpdateAll() override;
+
+private:
+  friend class peEntityManager;
+
+  //! \brief Gets called when the given component was created
+  //! \param component The new component
+  //! \param entity The entity that the component was added to
+  template <typename Component>
+  void OnCreateComponent(Component &component, const peEntity &entity);
+  //! \brief Gets called right before a component gets destroyed
+  //! \param component The component to be destroyed
+  //! \param entity The entity that the component belongs to
+  template <typename Component>
+  void OnDestroyComponent(Component &component, const peEntity &entity);
+
+  peEntityManager *_entityManager;
+};
+
+namespace detail {
+template <typename System, typename = std::void_t<>>
+struct HasOnCreate : std::false_type {};
+
+template <typename System>
+struct HasOnCreate<System, std::void_t<decltype(std::declval<System>().OnCreate(
+                               std::declval<typename System::Component_t &>(),
+                               std::declval<const peEntity &>()))>>
+    : std::true_type {};
+
+template <typename System, typename = std::void_t<>>
+struct HasOnDestroy : std::false_type {};
+
+template <typename System>
+struct HasOnDestroy<System,
+                    std::void_t<decltype(std::declval<System>().OnDestroy(
+                        std::declval<typename System::Component_t &>(),
+                        std::declval<const peEntity &>()))>> : std::true_type {
+};
+
+template <typename System, typename = std::void_t<>>
+struct HasOnUpdate : std::false_type {};
+
+template <typename System>
+struct HasOnUpdate<System, std::void_t<decltype(std::declval<System>().OnUpdate(
+                               std::declval<typename System::Component_t &>(),
+                               std::declval<const peEntity &>()))>>
+    : std::true_type {};
+} // namespace detail
 #pragma endregion
 
 #pragma region IteratorPredicates
 //! \brief Iterator predicate that checks that an entity has all of the given
 //! components
 template <typename... Components> struct AllOfPredicate {
-  bool operator()(uint32_t index, const peEntityManager &entityManager) const;
+  bool operator()(uint32_t index, peEntityManager &entityManager) const;
 };
 #pragma endregion
 
@@ -234,7 +341,9 @@ public:
   template <typename Predicate = detail::AlwaysTrue> class BaseIterator {
   public:
     BaseIterator(uint32_t startIndex, peEntityManager &entityManager)
-        : _entityManager(entityManager), _index(startIndex) {}
+        : _entityManager(entityManager), _index(startIndex) {
+      GoToFirstValid();
+    }
 
     BaseIterator &operator++() {
       if (IsAtEnd())
@@ -264,6 +373,15 @@ public:
         ++_index;
       } while (!IsAtEnd() && (!_entityManager.IsAlive(_index) ||
                               !Predicate{}(_index, _entityManager)));
+    }
+
+    //! \brief Move to the first valid index from the current position. If the
+    //! current index is valid, do nothing
+    void GoToFirstValid() {
+      while (!IsAtEnd() && (!_entityManager.IsAlive(_index) ||
+                            !Predicate{}(_index, _entityManager))) {
+        ++_index;
+      }
     }
   };
 
@@ -303,8 +421,8 @@ public:
 
     auto begin() const { return *this; }
     auto end() const {
-      return ComponentIterator<Component, Predicate>{_entityManager.Capacity(),
-                                                     _entityManager};
+      return ComponentIterator<Component, Predicate>{
+          static_cast<uint32_t>(_entityManager.Capacity()), _entityManager};
     }
   };
 
@@ -350,15 +468,27 @@ public:
           "Entity already contains a component of this type!"};
     auto family = GetFamilyOf<Component>();
     EnsureComponentPoolExists<Component>(family);
+    EnsureComponentSystemExists<Component>(family);
     auto &pool = _componentPools[family];
     // TODO By doing it this way, each entity occupies space for ALL possible
     // components, even if they are not used...
     // Create the new component...
     auto componentMemory = pool->Get(entityHandle.index);
-    new (componentMemory) Component{std::forward<Args>()...};
+    auto component =
+        new (componentMemory) Component{std::forward<Args>(args)...};
     //... and set the bit in the components mask
     auto &componentsMask = _entityComponentMasks[entityHandle.index];
     componentsMask.set(family, true);
+
+    // If system is registered for component type, notify of component
+    // creation
+    auto system = _systems[family].get();
+    if constexpr (HasAssociatedSystem_v<Component>) {
+      using System_t = typename Component::System_t;
+      static_cast<peComponentSystem<System_t> *>(system)->OnCreateComponent(
+          *component, {entityHandle, *this});
+    }
+
     return {entityHandle, this};
   }
   //! \brief Tries to remove the component of type <paramref name="Component"/>
@@ -372,6 +502,17 @@ public:
       return;
 
     auto component = DerefComponentHandle(componentHandle);
+
+    // If system is registered for componen type, notify of component
+    // destruction
+    auto family = GetFamilyOf<Component>();
+    auto system = _systems[family].get();
+    if constexpr (HasAssociatedSystem_v<Component>) {
+      using System_t = typename Component::System_t;
+      static_cast<peComponentSystem<System_t> *>(system)->OnDestroyComponent(
+          *component, {entityHandle, *this});
+    }
+
     component->~Component();
 
     auto &componentsMask = _entityComponentMasks[entityHandle.index];
@@ -415,9 +556,8 @@ public:
   //! \brief Returns an iterator to iterate over all components of the given
   //! type \tparam Component Component type \returns Iterator to iterate over
   //! all components of type <paramref name="Component"/>
-  template <typename Component>
-  ComponentIterator<Component> AllComponents() const {
-    return {0, *this};
+  template <typename Component> decltype(auto) AllComponents() {
+    return ComponentIterator<Component, AllOfPredicate<Component>>{0, *this};
   }
 
   //! \brief Applies the given function to each entity that has the given set of
@@ -453,6 +593,10 @@ public:
   //! \returns Entity at given index, or invalid entity if it
   //! does not exist
   peEntity GetEntityAt(uint32_t index);
+
+  //! \brief Returns a pointer to the component system for the given componen
+  //! type
+  template <typename Component> decltype(auto) GetComponentSystem() const;
 
 private:
   template <typename Component> friend class peComponentHandle;
@@ -491,6 +635,18 @@ private:
     pool->Reserve(_entityVersions.size());
   }
 
+  template <typename Component>
+  void EnsureComponentSystemExists(peBaseComponent::Family_t family) {
+    if (_systems.size() <= family)
+      _systems.resize(family + 1);
+    if constexpr (HasAssociatedSystem_v<Component>) {
+      using System_t = typename Component::System_t;
+      auto sys = std::make_unique<System_t>();
+      sys->_entityManager = this;
+      _systems[family] = std::move(sys);
+    }
+  }
+
   // One object pool for each type of components
   peVector<std::unique_ptr<peBasePool>> _componentPools;
   // Bitmasks for each entity that indicate which components the entity has
@@ -501,6 +657,8 @@ private:
   // List that stores the indices of all slots that are free (i.e. contain
   // destroyed entities)
   peVector<uint32_t> _freeSlots;
+  // The systems that interact with components
+  peVector<std::unique_ptr<peBaseComponentSystem>> _systems;
 };
 
 #pragma endregion
@@ -540,18 +698,94 @@ bool peComponentHandle<Component>::IsValid() const {
 }
 
 template <typename Component>
+peComponentHandle<Component>::operator bool() const {
+  return IsValid();
+}
+
+template <typename Component>
 Component *peComponentHandle<Component>::Dereference() const {
   return _entityManager->DerefComponentHandle(*this);
+}
+
+template <typename Component>
+peEntity peComponentHandle<Component>::GetEntity() const {
+  return peEntity{_entityHandle, *_entityManager};
 }
 #pragma endregion
 
 #pragma region IteratorPredicateTemplates
 template <typename... Components>
 bool AllOfPredicate<Components...>::
-operator()(uint32_t index, const peEntityManager &entityManager) const {
+operator()(uint32_t index, peEntityManager &entityManager) const {
   return entityManager.HasAllOf<Components...>(
-      entityManager.GetEntityAt(index));
+      entityManager.GetEntityAt(index).GetHandle());
 }
+#pragma endregion
+
+#pragma region peComponentSystemTemplates
+
+// All these methods will only get called if the subclass actually defines the
+// matching methods
+
+template <typename System>
+template <typename Component>
+void peComponentSystem<System>::OnCreateComponent(Component &component,
+                                                  const peEntity &entity) {
+  if constexpr (detail::HasOnCreate<System>::value) {
+    static_cast<System *>(this)->OnCreate(component, entity);
+  }
+}
+
+template <typename System>
+template <typename Component>
+void peComponentSystem<System>::OnDestroyComponent(Component &component,
+                                                   const peEntity &entity) {
+  if constexpr (detail::HasOnDestroy<System>::value) {
+    static_cast<System *>(this)->OnDestroy(component, entity);
+  }
+}
+
+namespace {
+template <typename Func> struct FirstFunctionArgument {};
+
+template <typename ClassType, typename First, typename... Rest>
+struct FirstFunctionArgument<void (ClassType::*)(First, Rest...)> {
+  using FirstArgument_t = First;
+};
+} // namespace
+
+template <typename System> void peComponentSystem<System>::OnUpdateAll() {
+  if constexpr (detail::HasOnUpdate<System>::value) {
+    // Use some template hackery to get the type of component from the signature
+    // of the OnUpdate function on class System
+    using Component_t = std::decay_t<typename FirstFunctionArgument<decltype(
+        &System::OnUpdate)>::FirstArgument_t>;
+    auto all = _entityManager->AllComponents<Component_t>();
+    for (auto &comp : all) {
+      static_cast<System *>(this)->OnUpdate(*comp, comp.GetEntity());
+    }
+  }
+}
+
+#pragma endregion
+
+#pragma region peEntityManagerTemplates
+
+template <typename Component>
+decltype(auto) peEntityManager::GetComponentSystem() const {
+  static_assert(HasAssociatedSystem_v<Component>,
+                "This component type has no associated component system! "
+                "Consider exposing a system by adding a type alias to the "
+                "component type in this form: using System_t = 'SystemType'");
+  auto family = GetFamilyOf<Component>();
+  if (family >= _systems.size())
+    throw std::runtime_error{"No system defined for this component type!"};
+  auto system = _systems[family].get();
+  if (!system)
+    throw std::runtime_error{"No system defined for this component type!"};
+  return *static_cast<typename Component::System_t *>(system);
+}
+
 #pragma endregion
 
 } // namespace pe

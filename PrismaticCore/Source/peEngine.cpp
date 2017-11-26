@@ -2,7 +2,6 @@
 #include "SubsystemImpl\peInputSystem.h"
 #include "SubsystemImpl\peUpdateSystem.h"
 
-
 #include <cstdlib>
 
 namespace pe {
@@ -23,7 +22,8 @@ peEngine::~peEngine() {
 
 void peEngine::Init() {
   _logger = New<peLogging>(GlobalAllocator);
-  _logger->RegisterLogChannel(New<peConsoleLogChannel>(GlobalAllocator));
+  _logger->RegisterLogChannel(
+      New<peFileLogChannel>(GlobalAllocator, "D:\\tracelog.txt"));
 
   _logger->LogInfo("Initializing renderer...");
   _renderer = _dllLoader.GetRenderer();
@@ -39,9 +39,16 @@ void peEngine::Init() {
   _updateSystem = New<peUpdateSystem>(GlobalAllocator);
   _updateSystem->Init();
   _logger->LogInfo("Update system initialized!");
+
+  _logger->LogInfo("Initializing world...");
+  _world = peMakeUnique<peWorld>(GlobalAllocator);
+  _logger->LogInfo("World initialized!");
 }
 
 void peEngine::Shutdown() {
+
+  _world = nullptr;
+
   if (_updateSystem != nullptr) {
     _updateSystem->Shutdown();
     DeleteAndNull(_updateSystem);
@@ -61,6 +68,16 @@ void peEngine::Shutdown() {
   if (_logger != nullptr) {
     DeleteAndNull(_logger);
   }
+}
+
+IRenderer *Renderer() { return peEngine::GetInstance().GetRenderer(); }
+
+peLogging *Log() { return peEngine::GetInstance().GetLogging(); }
+
+IInputSystem *InputSystem() { return peEngine::GetInstance().GetInputSystem(); }
+
+IUpdateSystem *UpdateSystem() {
+  return peEngine::GetInstance().GetUpdateSystem();
 }
 
 } // namespace pe

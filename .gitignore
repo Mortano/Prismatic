@@ -39,3 +39,12 @@ PrismaticUtil/x64/Debug/
 PrismaticCore.Test/x64/
 PrismaticRenderer/x64/Debug/
 PrismaticTest/x64/
+/PrismaticRenderer/x64/Test
+/PrismaticPathTracer/x64
+/PrismaticRenderer/x64/Release
+/PrismaticUtil/Release
+/PrismaticUtil/x64
+/Performance1.psess
+/testdiag.txt
+/testdiag.host.17-10-30_14-56-48_65097_1.txt
+/Report171120.vspx

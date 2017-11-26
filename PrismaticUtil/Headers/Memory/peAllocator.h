@@ -113,32 +113,18 @@ private:
 
 template <typename T, typename... Args>
 std::enable_if_t<std::is_base_of<pe::peAllocatable, T>::value, T *>
-New(Args &&... ctorArgs, IAllocator *allocator) {
+New(IAllocator *allocator, Args &&... ctorArgs) {
   T *ret =
       new (allocator->Allocate(sizeof(T))) T(std::forward<Args>(ctorArgs)...);
   ret->SetAllocator(allocator);
   return ret;
 }
 
-template <typename T>
-std::enable_if_t<std::is_base_of<pe::peAllocatable, T>::value, T *>
-New(IAllocator *allocator) {
-  auto ret = new (allocator->Allocate(sizeof(T))) T();
-  ret->SetAllocator(allocator);
-  return ret;
-}
-
 template <typename T, typename... Args>
 std::enable_if_t<!std::is_base_of<pe::peAllocatable, T>::value, T *>
-New(Args &&... ctorArgs, IAllocator *allocator) {
+New(IAllocator *allocator, Args &&... ctorArgs) {
   return new (allocator->Allocate(sizeof(T)))
       T(std::forward<Args>(ctorArgs)...);
-}
-
-template <typename T>
-std::enable_if_t<!std::is_base_of<pe::peAllocatable, T>::value, T *>
-New(IAllocator *allocator) {
-  return new (allocator->Allocate(sizeof(T))) T();
 }
 
 template <typename T>

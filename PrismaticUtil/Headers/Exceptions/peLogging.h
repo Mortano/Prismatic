@@ -6,6 +6,7 @@
 #include "DataStructures/peVector.h"
 #include "Memory\peAllocatable.h"
 #include "peUtilDefs.h"
+#include <fstream>
 #include <mutex>
 
 namespace pe {
@@ -39,6 +40,15 @@ private:
 class PE_UTIL_API peConsoleLogChannel : public ILogChannel {
 public:
   virtual void Log(LogLevel level, const char *msg) override;
+};
+
+class PE_UTIL_API peFileLogChannel : public ILogChannel {
+public:
+  explicit peFileLogChannel(const std::string &filePath);
+  void Log(LogLevel level, const char *msg) override;
+
+private:
+  std::ofstream _fstream;
 };
 
 } // namespace pe

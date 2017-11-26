@@ -12,8 +12,14 @@ namespace detail {
 /// back_insert_iterator that uses emplace_back with rvalue references. More or
 /// less copied from the STL implementation of back_insert_iterator
 /// </summary>
-template <typename Container> class back_emplace_iterator : public std::_Outit {
+template <typename Container> class back_emplace_iterator {
 public:
+	using iterator_category = std::output_iterator_tag;
+	using value_type = typename Container::value_type;
+	using difference_type = typename Container::difference_type;
+	using pointer = typename Container::pointer;
+	using reference = typename Container::reference; 
+
   using container_type = Container;
   using _Unchecked_type = back_emplace_iterator<Container>;
 

@@ -3,22 +3,27 @@
 
 #include "OpenGL\peGlRendererBackend.h"
 
-namespace pe
-{
+namespace pe {
 
 //! OpenGL implementation of the renderer
-class peGlRenderer : public IRenderer
-{
+class peGlRenderer : public IRenderer {
 public:
-                        peGlRenderer();
-                        ~peGlRenderer();
+  peGlRenderer();
+  ~peGlRenderer();
 
-    void                Init() override;
-    void                Shutdown() override;
-    void                Update(double delta) override;
+  void Init() override;
+  void Shutdown() override;
+  void Update(double delta) override;
+
+  void RegisterDrawableEntity(const peEntity &entity) override;
+  void DeregisterDrawableEntity(const peEntity &entity) override;
 
 private:
-    peGlRendererBackend _backend;
+  void RegisterRenderResource(const peWeakPtr<peRenderResource> &res) override;
+  void
+  DeregisterRenderResource(const peWeakPtr<peRenderResource> &res) override;
+
+  peGlRendererBackend _backend;
 };
 
-}
+} // namespace pe

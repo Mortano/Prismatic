@@ -58,6 +58,8 @@ peEntity peEntityManager::CreateEntity() {
     _entityComponentMasks.emplace_back();
     auto entityCount = static_cast<uint32_t>(_entityComponentMasks.size());
     for (auto &pool : _componentPools) {
+      if (!pool)
+        continue;
       pool->Reserve(entityCount);
     }
 

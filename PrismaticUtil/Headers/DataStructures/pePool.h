@@ -40,8 +40,9 @@ public:
   void *Get(size_t idx) const {
     if (idx >= GetCount())
       throw std::runtime_error{"Index out of bounds!"};
-    auto chunkIdx = idx / _chunkSize;
-    auto offset = idx % _chunkSize;
+    auto byteIdx = idx * _elementSize;
+    auto chunkIdx = byteIdx / _chunkSize;
+    auto offset = byteIdx % _chunkSize;
     return _chunks[chunkIdx] + offset;
   }
 

@@ -1,6 +1,5 @@
 #include "Threading\peSemaphore.h"
 
-
 namespace pe {
 
 peSemaphore::peSemaphore(int maxCount) {
@@ -23,4 +22,8 @@ void peSemaphore::WaitAndDecrement() const {
   WaitForSingleObject(m_handle, INFINITE);
 }
 
+bool peSemaphore::TryDecrement() const {
+  const auto res = WaitForSingleObject(m_handle, 0);
+  return res == WAIT_OBJECT_0;
+}
 } // namespace pe

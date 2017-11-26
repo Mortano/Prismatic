@@ -36,42 +36,18 @@ public:
   peStlAllocatorWrapper(const peStlAllocatorWrapper &other)
       : _allocator(other._allocator) {}
 
-  peStlAllocatorWrapper(peStlAllocatorWrapper &&other) noexcept
-      : _allocator(other._allocator) {
-    other._allocator = nullptr;
-  }
-
   template <typename U, typename = std::enable_if_t<!std::is_same_v<U, T>>>
   peStlAllocatorWrapper(const peStlAllocatorWrapper<U> &other)
       : _allocator(other._allocator) {}
-
-  template <typename U, typename = std::enable_if_t<!std::is_same_v<U, T>>>
-  peStlAllocatorWrapper(peStlAllocatorWrapper<U> &&other) noexcept
-      : _allocator(other._allocator) {
-    other._allocator = nullptr;
-  }
 
   peStlAllocatorWrapper &operator=(const peStlAllocatorWrapper &other) {
     _allocator = other._allocator;
     return *this;
   }
 
-  peStlAllocatorWrapper &operator=(peStlAllocatorWrapper &&other) noexcept {
-    _allocator = other._allocator;
-    other._allocator = nullptr;
-    return *this;
-  }
-
   template <typename U, typename = std::enable_if_t<!std::is_same_v<U, T>>>
   peStlAllocatorWrapper &operator=(const peStlAllocatorWrapper<U> &other) {
     _allocator = other._allocator;
-    return *this;
-  }
-
-  template <typename U, typename = std::enable_if_t<!std::is_same_v<U, T>>>
-  peStlAllocatorWrapper &operator=(peStlAllocatorWrapper<U> &&other) noexcept {
-    _allocator = other._allocator;
-    other._allocator = nullptr;
     return *this;
   }
 

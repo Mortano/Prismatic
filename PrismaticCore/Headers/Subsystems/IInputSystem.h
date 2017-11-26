@@ -3,7 +3,8 @@
 #include "ISubsystem.h"
 #include "peCoreDefs.h"
 #include "peUtilDefs.h"
-#include "peVector2.h"
+
+#include <glm/common.hpp>
 
 namespace pe {
 
@@ -22,7 +23,7 @@ public:
   //! Returns the state of the given key
   virtual KeyState GetKeyState(KeyCode_t key) const = 0;
   //! Returns the last mouse position
-  virtual peVector2f GetMouseDelta() const = 0;
+  virtual glm::ivec2 GetMouseDelta() const = 0;
   //! Returns the state of the given mouse button
   virtual KeyState GetMouseButtonState(MouseButton mouseButton) const = 0;
 
